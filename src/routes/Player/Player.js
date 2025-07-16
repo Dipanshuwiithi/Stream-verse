@@ -236,6 +236,12 @@ const Player = ({ urlParams, queryParams }) => {
         updateSettings({ subtitlesSize: size });
     }, [updateSettings]);
 
+    const onUpdateSubtitlesSize = React.useCallback((delta) => {
+        const sizeIndex = CONSTANTS.SUBTITLES_SIZES.indexOf(video.state.subtitlesSize);
+        const size = CONSTANTS.SUBTITLES_SIZES[Math.max(0, Math.min(CONSTANTS.SUBTITLES_SIZES.length - 1, sizeIndex + delta))];
+        onSubtitlesSizeChanged(size);
+    }, [video.state.subtitlesSize, onSubtitlesSizeChanged]);
+
     const onSubtitlesOffsetChanged = React.useCallback((offset) => {
         updateSettings({ subtitlesOffset: offset });
     }, [updateSettings]);
@@ -622,6 +628,14 @@ const Player = ({ urlParams, queryParams }) => {
                     onIncreaseSubtitlesDelay();
                     break;
                 }
+                case 'Minus': {
+                    onUpdateSubtitlesSize(-1);
+                    break;
+                }
+                case 'Equal': {
+                    onUpdateSubtitlesSize(1);
+                    break;
+                }
                 case 'Escape': {
                     closeMenus();
                     !settings.escExitFullscreen && window.history.back();
@@ -677,6 +691,7 @@ const Player = ({ urlParams, queryParams }) => {
         toggleSideDrawer,
         onDecreaseSubtitlesDelay,
         onIncreaseSubtitlesDelay,
+        onUpdateSubtitlesSize,
     ]);
 
     React.useEffect(() => {
@@ -766,6 +781,8 @@ const Player = ({ urlParams, queryParams }) => {
                     className={classnames(styles['layer'], styles['menu-layer'])}
                     stream={player?.selected?.stream}
                     playbackDevices={playbackDevices}
+                    extraSubtitlesTracks={video.state.extraSubtitlesTracks}
+                    selectedExtraSubtitlesTrackId={video.state.selectedExtraSubtitlesTrackId}
                 />
             </ContextMenu>
             <HorizontalNavBar
@@ -820,6 +837,7 @@ const Player = ({ urlParams, queryParams }) => {
             <Indicator
                 className={classnames(styles['layer'], styles['indicator-layer'])}
                 videoState={video.state}
+                disabled={subtitlesMenuOpen}
             />
             {
                 nextVideoPopupOpen ?
@@ -902,6 +920,8 @@ const Player = ({ urlParams, queryParams }) => {
                         className={classnames(styles['layer'], styles['menu-layer'])}
                         stream={player.selected.stream}
                         playbackDevices={playbackDevices}
+                        extraSubtitlesTracks={video.state.extraSubtitlesTracks}
+                        selectedExtraSubtitlesTrackId={video.state.selectedExtraSubtitlesTrackId}
                     />
                     :
                     null

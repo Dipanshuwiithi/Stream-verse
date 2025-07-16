@@ -15,6 +15,7 @@ const routesRegexp = require('./routesRegexp');
 const useAnimationFrame = require('./useAnimationFrame');
 const useBinaryState = require('./useBinaryState');
 const { default: useFullscreen } = require('./useFullscreen');
+const { default: useInterval } = require('./useInterval');
 const useLiveRef = require('./useLiveRef');
 const useModelState = require('./useModelState');
 const useNotifications = require('./useNotifications');
@@ -23,6 +24,7 @@ const useProfile = require('./useProfile');
 const { default: useSettings } = require('./useSettings');
 const { default: useShell } = require('./useShell');
 const useStreamingServer = require('./useStreamingServer');
+const { default: useTimeout } = require('./useTimeout');
 const useTorrent = require('./useTorrent');
 const useTranslate = require('./useTranslate');
 const { default: useOrientation } = require('./useOrientation');
@@ -49,6 +51,7 @@ module.exports = {
     useAnimationFrame,
     useBinaryState,
     useFullscreen,
+    useInterval,
     useLiveRef,
     useModelState,
     useNotifications,
@@ -57,6 +60,7 @@ module.exports = {
     useSettings,
     useShell,
     useStreamingServer,
+    useTimeout,
     useTorrent,
     useTranslate,
     useOrientation,

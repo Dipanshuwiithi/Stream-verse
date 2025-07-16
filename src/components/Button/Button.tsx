@@ -16,6 +16,8 @@ type Props = {
     children: React.ReactNode,
     onKeyDown?: (event: React.KeyboardEvent) => void,
     onMouseDown?: (event: React.MouseEvent) => void,
+    onMouseUp?: (event: React.MouseEvent) => void,
+    onMouseLeave?: (event: React.MouseEvent) => void,
     onLongPress?: () => void,
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
     onDoubleClick?: () => void,

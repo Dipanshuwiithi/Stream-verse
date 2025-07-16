@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2024 Smart code 203358507
 
-import React, { useMemo, useCallback, useState, forwardRef, memo, useRef, useEffect } from 'react';
+import React, { useMemo, useCallback, useState, forwardRef, memo, useRef } from 'react';
 import classNames from 'classnames';
 import Icon from '@stremio/stremio-icons/react';
 import { useServices } from 'stremio/services';
@@ -18,7 +18,7 @@ type Props = {
     transitionEnded: boolean;
 };
 
-const SideDrawer = memo(forwardRef<HTMLDivElement, Props>(({ seriesInfo, className, closeSideDrawer, selected, transitionEnded, ...props }: Props, ref) => {
+const SideDrawer = memo(forwardRef<HTMLDivElement, Props>(({ seriesInfo, className, closeSideDrawer, selected, ...props }: Props, ref) => {
     const { core } = useServices();
     const [season, setSeason] = useState<number>(seriesInfo?.season);
     const selectedVideoRef = useRef<HTMLDivElement>(null);
@@ -78,16 +78,14 @@ const SideDrawer = memo(forwardRef<HTMLDivElement, Props>(({ seriesInfo, classNa
         event.stopPropagation();
     };
 
-    const getSelectedRef = useCallback((video: Video) => {
-        return video.id === selected ? selectedVideoRef : null;
-    }, [selected]);
-
-    useEffect(() => {
-        transitionEnded && selectedVideoRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, [transitionEnded]);
+    const onTransitionEnd = () => {
+        selectedVideoRef.current?.scrollIntoView({
+            behavior: 'smooth',
+        });
+    };
 
     return (
-        <div ref={ref} className={classNames(styles['side-drawer'], className)} onMouseDown={onMouseDown}>
+        <div ref={ref} className={classNames(styles['side-drawer'], className)} onMouseDown={onMouseDown} onTransitionEnd={onTransitionEnd}>
             <div className={styles['close-button']} onClick={closeSideDrawer}>
                 <Icon className={styles['icon']} name={'chevron-forward'} />
             </div>
@@ -116,6 +114,7 @@ const SideDrawer = memo(forwardRef<HTMLDivElement, Props>(({ seriesInfo, classNa
                             {videos.map((video, index) => (
                                 <Video
                                     key={index}
+                                    ref={video.id === selected ? selectedVideoRef : null}
                                     className={styles['video']}
                                     id={video.id}
                                     title={video.title}
@@ -131,7 +130,6 @@ const SideDrawer = memo(forwardRef<HTMLDivElement, Props>(({ seriesInfo, classNa
                                     scheduled={video.scheduled}
                                     onMarkVideoAsWatched={onMarkVideoAsWatched}
                                     onMarkSeasonAsWatched={onMarkSeasonAsWatched}
-                                    ref={getSelectedRef(video)}
                                 />
                             ))}
                         </div>

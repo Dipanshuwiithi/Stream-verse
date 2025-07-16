@@ -13,7 +13,6 @@ const Transition = ({ children, when, name }: Props) => {
 
     const [state, setState] = useState('enter');
     const [active, setActive] = useState(false);
-    const [transitionEnded, setTransitionEnded] = useState(false);
 
     const callbackRef = useCallback((element: HTMLElement | null) => {
         setElement(element);
@@ -31,14 +30,12 @@ const Transition = ({ children, when, name }: Props) => {
     }, [name, state, active, children]);
 
     const onTransitionEnd = useCallback(() => {
-        setTransitionEnded(true);
         state === 'exit' && setMounted(false);
     }, [state]);
 
     useEffect(() => {
         setState(when ? 'enter' : 'exit');
         when && setMounted(true);
-        setTransitionEnded(false);
     }, [when]);
 
     useEffect(() => {
@@ -56,7 +53,6 @@ const Transition = ({ children, when, name }: Props) => {
         mounted && cloneElement(children, {
             ref: callbackRef,
             className,
-            transitionEnded
         })
     );
 };

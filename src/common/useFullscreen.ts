@@ -42,11 +42,21 @@ const useFullscreen = () => {
         };
 
         const onKeyDown = (event: KeyboardEvent) => {
+
+            const activeElement = document.activeElement as HTMLElement;
+
+            const inputFocused =
+                activeElement &&
+                (activeElement.tagName === 'INPUT' ||
+                 activeElement.tagName === 'TEXTAREA' ||
+                 activeElement.tagName === 'SELECT' ||
+                 activeElement.isContentEditable);
+
             if (event.code === 'Escape' && settings.escExitFullscreen) {
                 exitFullscreen();
             }
 
-            if (event.code === 'KeyF') {
+            if (event.code === 'KeyF' && !inputFocused) {
                 toggleFullscreen();
             }
 

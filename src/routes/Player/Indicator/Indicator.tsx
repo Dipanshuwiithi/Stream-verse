@@ -22,9 +22,10 @@ type VideoState = Record<string, number>;
 type Props = {
     className: string,
     videoState: VideoState,
+    disabled: boolean,
 };
 
-const Indicator = ({ className, videoState }: Props) => {
+const Indicator = ({ className, videoState, disabled }: Props) => {
     const timeout = useRef<NodeJS.Timeout | null>(null);
     const prevVideoState = useRef<VideoState>(videoState);
 
@@ -60,7 +61,7 @@ const Indicator = ({ className, videoState }: Props) => {
     }, [videoState]);
 
     return (
-        <Transition when={shown} name={'fade'}>
+        <Transition when={shown && !disabled} name={'fade'}>
             <div className={classNames(className, styles['indicator-container'])}>
                 <div className={styles['indicator']}>
                     <div>{label} {value}</div>
