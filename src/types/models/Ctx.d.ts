@@ -19,6 +19,7 @@ type Settings = {
     autoFrameRateMatching: boolean,
     bingeWatching: boolean,
     hardwareDecoding: boolean,
+    videoMode: string | null,
     escExitFullscreen: boolean,
     interfaceLanguage: string,
     quitOnClose: boolean,
@@ -41,6 +42,7 @@ type Settings = {
     subtitlesOutlineColor: string,
     subtitlesSize: number,
     subtitlesTextColor: string,
+    assSubtitlesStyling: boolean,
     surroundSound: boolean,
     pauseOnMinimize: boolean,
 };

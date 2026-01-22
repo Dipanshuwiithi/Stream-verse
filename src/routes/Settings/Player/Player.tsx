@@ -3,6 +3,7 @@ import { ColorInput, MultiselectMenu, Toggle } from 'stremio/components';
 import { useServices } from 'stremio/services';
 import { Category, Option, Section } from '../components';
 import usePlayerOptions from './usePlayerOptions';
+import { usePlatform } from 'stremio/common';
 
 type Props = {
     profile: Profile,
@@ -10,6 +11,7 @@ type Props = {
 
 const Player = forwardRef<HTMLDivElement, Props>(({ profile }: Props, ref) => {
     const { shell } = useServices();
+    const platform = usePlatform();
 
     const {
         subtitlesLanguageSelect,
@@ -17,6 +19,7 @@ const Player = forwardRef<HTMLDivElement, Props>(({ profile }: Props, ref) => {
         subtitlesTextColorInput,
         subtitlesBackgroundColorInput,
         subtitlesOutlineColorInput,
+        assSubtitlesStylingToggle,
         audioLanguageSelect,
         surroundSoundToggle,
         seekTimeDurationSelect,
@@ -26,6 +29,7 @@ const Player = forwardRef<HTMLDivElement, Props>(({ profile }: Props, ref) => {
         bingeWatchingToggle,
         playInBackgroundToggle,
         hardwareDecodingToggle,
+        videoModeSelect,
         pauseOnMinimizeToggle,
     } = usePlayerOptions(profile);
 
@@ -108,7 +112,6 @@ const Player = forwardRef<HTMLDivElement, Props>(({ profile }: Props, ref) => {
                 <Option label={'SETTINGS_NEXT_VIDEO_POPUP_DURATION'}>
                     <MultiselectMenu
                         className={'multiselect'}
-                        disabled={!profile.settings.bingeWatching}
                         {...nextVideoPopupDurationSelect}
                     />
                 </Option>
@@ -130,11 +133,29 @@ const Player = forwardRef<HTMLDivElement, Props>(({ profile }: Props, ref) => {
                         </Option>
                 }
                 {
+                    shell.active && platform.name === 'windows' &&
+                        <Option label={'SETTINGS_VIDEO_MODE'}>
+                            <MultiselectMenu
+                                className={'multiselect'}
+                                {...videoModeSelect}
+                            />
+                        </Option>
+                }
+                {
                     shell.active &&
                         <Option label={'SETTINGS_PAUSE_MINIMIZED'}>
                             <Toggle
                                 tabIndex={-1}
                                 {...pauseOnMinimizeToggle}
+                            />
+                        </Option>
+                }
+                {
+                    shell.active &&
+                        <Option label={'SETTINGS_ASS_SUBTITLES_STYLING'}>
+                            <Toggle
+                                tabIndex={-1}
+                                {...assSubtitlesStylingToggle}
                             />
                         </Option>
                 }

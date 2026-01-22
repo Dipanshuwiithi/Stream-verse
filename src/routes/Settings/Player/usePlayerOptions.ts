@@ -92,6 +92,22 @@ const usePlayerOptions = (profile: Profile) => {
         }
     }), [profile.settings]);
 
+    const assSubtitlesStylingToggle = useMemo(() => ({
+        checked: profile.settings.assSubtitlesStyling,
+        onClick: () => {
+            core.transport.dispatch({
+                action: 'Ctx',
+                args: {
+                    action: 'UpdateSettings',
+                    args: {
+                        ...profile.settings,
+                        assSubtitlesStyling: !profile.settings.assSubtitlesStyling
+                    }
+                }
+            });
+        }
+    }), [profile.settings]);
+
     const subtitlesOutlineColorInput = useMemo(() => ({
         value: profile.settings.subtitlesOutlineColor,
         onChange: (value: string) => {
@@ -287,6 +303,38 @@ const usePlayerOptions = (profile: Profile) => {
         }
     }), [profile.settings]);
 
+    const videoModeSelect = useMemo(() => ({
+        options: [
+            {
+                value: null,
+                label: t('SETTINGS_VIDEO_MODE_DEFAULT'),
+            },
+            {
+                value: 'legacy',
+                label: t('SETTINGS_VIDEO_MODE_LEGACY'),
+            }
+        ],
+        value: profile.settings.videoMode,
+        title: () => {
+            return profile.settings.videoMode === 'legacy' ?
+                t('SETTINGS_VIDEO_MODE_LEGACY')
+                :
+                t('SETTINGS_VIDEO_MODE_DEFAULT');
+        },
+        onSelect: (value: string | null) => {
+            core.transport.dispatch({
+                action: 'Ctx',
+                args: {
+                    action: 'UpdateSettings',
+                    args: {
+                        ...profile.settings,
+                        videoMode: value,
+                    }
+                }
+            });
+        }
+    }), [profile.settings]);
+
     const pauseOnMinimizeToggle = useMemo(() => ({
         checked: profile.settings.pauseOnMinimize,
         onClick: () => {
@@ -309,6 +357,7 @@ const usePlayerOptions = (profile: Profile) => {
         subtitlesTextColorInput,
         subtitlesBackgroundColorInput,
         subtitlesOutlineColorInput,
+        assSubtitlesStylingToggle,
         audioLanguageSelect,
         surroundSoundToggle,
         seekTimeDurationSelect,
@@ -318,6 +367,7 @@ const usePlayerOptions = (profile: Profile) => {
         bingeWatchingToggle,
         playInBackgroundToggle,
         hardwareDecodingToggle,
+        videoModeSelect,
         pauseOnMinimizeToggle,
     };
 };
