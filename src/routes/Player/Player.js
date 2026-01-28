@@ -92,6 +92,7 @@ const Player = ({ urlParams, queryParams }) => {
     const defaultSubtitlesSelected = React.useRef(false);
     const subtitlesEnabled = React.useRef(true);
     const defaultAudioTrackSelected = React.useRef(false);
+    const playingOnExternalDevice = React.useRef(false);
     const [error, setError] = React.useState(null);
 
     const isNavigating = React.useRef(false);
@@ -189,6 +190,7 @@ const Player = ({ urlParams, queryParams }) => {
     }, []);
 
     const onPlayRequested = React.useCallback(() => {
+        playingOnExternalDevice.current = false;
         video.setPaused(false);
         setSeeking(false);
     }, []);
@@ -412,7 +414,9 @@ const Player = ({ urlParams, queryParams }) => {
     }, [video.state.time, video.state.duration, video.state.manifest, seeking]);
 
     React.useEffect(() => {
-        if (video.state.paused !== null) {
+        if (playingOnExternalDevice.current && video.state.paused === false) {
+            onPauseRequested();
+        } else if (video.state.paused !== null) {
             pausedChanged(video.state.paused);
         }
     }, [video.state.paused]);
@@ -507,6 +511,7 @@ const Player = ({ urlParams, queryParams }) => {
         defaultSubtitlesSelected.current = false;
         defaultAudioTrackSelected.current = false;
         nextVideoPopupDismissed.current = false;
+        playingOnExternalDevice.current = false;
         // we need a timeout here to make sure that previous page unloads and the new one loads
         // avoiding race conditions and flickering
         setTimeout(() => isNavigating.current = false, 1000);
@@ -548,6 +553,7 @@ const Player = ({ urlParams, queryParams }) => {
         };
         const onCoreEvent = ({ event }) => {
             if (event === 'PlayingOnDevice') {
+                playingOnExternalDevice.current = true;
                 onPauseRequested();
             }
         };
