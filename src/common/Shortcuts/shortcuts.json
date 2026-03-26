@@ -100,6 +100,16 @@
                 "combos": [["R"]]
             },
             {
+                "name": "speedUp",
+                "label": "SETTINGS_SHORTCUT_INCREASE_PLAYBACK_SPEED",
+                "combos": [["]"]]
+            },
+            {
+                "name": "speedDown",
+                "label": "SETTINGS_SHORTCUT_DECREASE_PLAYBACK_SPEED",
+                "combos": [["["]]
+            },
+            {
                 "name": "statisticsMenu",
                 "label": "SETTINGS_SHORTCUT_MENU_STATISTICS",
                 "combos": [["D"]]
