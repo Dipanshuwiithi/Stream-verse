@@ -15,10 +15,10 @@ const packageJson = require('./package.json');
 let COMMIT_HASH = "development";
 
 try {
-  COMMIT_HASH = execSync('git rev-parse HEAD').toString().trim();
+    COMMIT_HASH = execSync('git rev-parse HEAD').toString().trim();
 } catch (e) {
-  console.log("Git commit hash unavailable, using fallback.");
-}
+    console.log("Git commit hash unavailable, using fallback.");
+}s
 
 const THREAD_LOADER = {
     loader: 'thread-loader',
@@ -195,7 +195,7 @@ module.exports = (env, argv) => ({
         liveReload: false
     },
     optimization: {
-        minimize: true,
+        minimize: false,
         minimizer: [
             new TerserPlugin({
                 test: /\.js$/,
