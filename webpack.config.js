@@ -12,7 +12,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const packageJson = require('./package.json');
 
-const COMMIT_HASH = execSync('git rev-parse HEAD').toString().trim();
+let COMMIT_HASH = "development";
+
+try {
+  COMMIT_HASH = execSync('git rev-parse HEAD').toString().trim();
+} catch (e) {
+  console.log("Git commit hash unavailable, using fallback.");
+}
 
 const THREAD_LOADER = {
     loader: 'thread-loader',
