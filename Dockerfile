@@ -1,5 +1,5 @@
-ARG NODE_VERSION=20-alpine
-FROM node:$NODE_VERSION
+# Base Node image
+FROM node:20-alpine
 
 # Install dependencies
 RUN apk add --no-cache git curl bash
@@ -16,15 +16,16 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-# Copy source and build frontend
+# Copy project and build
 COPY . .
 RUN pnpm build
 
-# Install Stremio streaming server
+# Install official Stremio streaming server binary
 RUN mkdir /streaming-server && \
     cd /streaming-server && \
-    wget https://dl.strem.io/server/v4.20.11/server-linux-x64.tar.gz && \
-    tar -xzf server-linux-x64.tar.gz
+    curl -L https://github.com/Stremio/server/releases/download/v4.20.8/server-linux-x64.tar.gz \
+    -o server.tar.gz && \
+    tar -xzf server.tar.gz
 
 # Copy HTTP server
 COPY http_server.js .
@@ -32,5 +33,5 @@ COPY http_server.js .
 EXPOSE 8080
 EXPOSE 11470
 
-# Start frontend + streaming engine together
+# Run frontend + streaming engine together
 CMD sh -c "node http_server.js & /streaming-server/server"
