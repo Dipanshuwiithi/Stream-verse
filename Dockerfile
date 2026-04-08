@@ -17,8 +17,12 @@ COPY . .
 RUN pnpm build
 
 
-# Stage 2 — Runtime container
-FROM stremio/server:latest
+# Stage 2 — Get streaming server binary
+FROM stremio/server:latest AS streaming
+
+
+# Stage 3 — Final runtime image
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -26,8 +30,11 @@ WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY http_server.js ./http_server.js
 
+# Copy streaming server binary
+COPY --from=streaming /usr/bin/server ./server
+
 EXPOSE 8080
 EXPOSE 11470
 
-# Start frontend + streaming server together
-CMD sh -c "node http_server.js & ./server"
+# Start frontend + streaming engine
+CMD ["sh", "-c", "node http_server.js & ./server"]
