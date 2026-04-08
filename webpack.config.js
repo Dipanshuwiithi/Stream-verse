@@ -18,7 +18,7 @@ try {
     COMMIT_HASH = execSync('git rev-parse HEAD').toString().trim();
 } catch (e) {
     console.log("Git commit hash unavailable, using fallback.");
-}s
+}
 
 const THREAD_LOADER = {
     loader: 'thread-loader',
