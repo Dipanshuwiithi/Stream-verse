@@ -17,20 +17,17 @@ COPY . .
 RUN pnpm build
 
 
-# Stage 2 — Runtime container with streaming server
+# Stage 2 — Runtime container
 FROM stremio/server:latest
 
 WORKDIR /app
 
-# Copy built frontend
+# Copy frontend build
 COPY --from=builder /app/build ./build
 COPY http_server.js ./http_server.js
-
-# Install Node to serve frontend
-RUN apk add --no-cache nodejs npm
 
 EXPOSE 8080
 EXPOSE 11470
 
-# Run frontend + streaming server together
+# Start frontend + streaming server together
 CMD sh -c "node http_server.js & ./server"
