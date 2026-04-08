@@ -23,8 +23,8 @@ RUN pnpm build
 # Install Stremio streaming server
 RUN mkdir /streaming-server && \
     cd /streaming-server && \
-    curl -L https://github.com/Stremio/server/releases/latest/download/server-linux-x64.tar.gz \
-    | tar -xz
+    wget https://dl.strem.io/server/v4.20.11/server-linux-x64.tar.gz && \
+    tar -xzf server-linux-x64.tar.gz
 
 # Copy HTTP server
 COPY http_server.js .
