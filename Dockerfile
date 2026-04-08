@@ -1,41 +1,46 @@
-# Stremio Node 20.x
-# the node version for running Stremio Web
+# Base Node image
 ARG NODE_VERSION=20-alpine
 FROM node:$NODE_VERSION AS base
 
-# Setup pnpm
+# Enable pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable
-RUN apk add --no-cache git
+RUN apk add --no-cache git curl bash
 
-# Meta
-LABEL Description="Stremio Web" Vendor="Smart Code OOD" Version="1.0.0"
-
-RUN mkdir -p /var/www/stremio-web
 WORKDIR /var/www/stremio-web
 
-# Setup app
+# Install dependencies
 FROM base AS app
 
-COPY package.json pnpm-lock.yaml /var/www/stremio-web
-RUN pnpm i --frozen-lockfile
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-COPY . /var/www/stremio-web
+COPY . .
 RUN pnpm build
 
-# Setup server
-FROM base AS server
+# Download Stremio streaming server
+FROM base AS streaming
 
-RUN pnpm i express@4
+WORKDIR /streaming-server
 
-# Finalize
+RUN curl -L https://github.com/Stremio/server/releases/latest/download/server-linux-x64.tar.gz \
+    | tar -xz
+
+# Final container
 FROM base
 
-COPY http_server.js /var/www/stremio-web
-COPY --from=server /var/www/stremio-web/node_modules /var/www/stremio-web/node_modules
-COPY --from=app /var/www/stremio-web/build /var/www/stremio-web/build
+WORKDIR /var/www/stremio-web
 
+COPY http_server.js ./
+COPY --from=app /var/www/stremio-web/build ./build
+COPY --from=app /var/www/stremio-web/node_modules ./node_modules
+COPY --from=streaming /streaming-server ./streaming-server
+
+# Expose ports
 EXPOSE 8080
-CMD ["node", "http_server.js"]
+EXPOSE 11470
+
+# Run both frontend + streaming engine
+CMD sh -c "node http_server.js & ./streaming-server/server"
