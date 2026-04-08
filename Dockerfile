@@ -17,7 +17,7 @@ COPY . .
 RUN pnpm build
 
 
-# Stage 2 — Get streaming server binary
+# Stage 2 — Extract streaming server from official image
 FROM stremio/server:latest AS streaming
 
 
@@ -30,11 +30,12 @@ WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY http_server.js ./http_server.js
 
-# Copy streaming server binary
-COPY --from=streaming /usr/bin/server ./server
+# Copy streaming server binary (correct location)
+COPY --from=streaming /usr/local/bin/server ./server
+
+RUN chmod +x ./server
 
 EXPOSE 8080
 EXPOSE 11470
 
-# Start frontend + streaming engine
 CMD ["sh", "-c", "node http_server.js & ./server"]
